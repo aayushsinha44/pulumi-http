@@ -5,8 +5,12 @@ from pulumi.automation.errors import StackAlreadyExistsError
 from pulumi_aws import s3
 from flask import Flask, request
 import uuid
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app)
+
 PROJECT_NAME = 'Pulumi-Website-Deployer-Multi-Cloud'
 
 def create_aws_s3(content):
@@ -37,8 +41,8 @@ def create_aws_website():
   stack_name = str(uuid.uuid4())
   content = request.json.get('content')
 
-  access_key = request.json.get('access_key')
-  secret_key = request.json.get('secret_key')
+  access_key = request.headers.get('access_key')
+  secret_key = request.headers.get('access_secret')
 
   if access_key == None or secret_key == None:
     return {"message": "AWS Keys are required"}, 400
@@ -68,8 +72,8 @@ def create_aws_website():
 def delete_aws_website(id):
   stack_name = id
 
-  access_key = request.json.get('access_key')
-  secret_key = request.json.get('secret_key')
+  access_key = request.headers.get('access_key')
+  secret_key = request.headers.get('access_secret')
 
   if access_key == None or secret_key == None:
     return {"message": "AWS Keys are required"}, 400
@@ -93,4 +97,4 @@ def delete_aws_website(id):
 if __name__ == "__main__":
   workspace = auto.LocalWorkspace()
   workspace.install_plugin("aws", "v4.0.0")
-  app.run(host='0.0.0.0', port=3000, debug=True)
+  app.run(host='0.0.0.0', port=5000, debug=True)
