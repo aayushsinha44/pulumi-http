@@ -1,5 +1,6 @@
 import { useState } from "react"
 import AWS from "./aws"
+import GCP from "./gcp"
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -31,7 +32,7 @@ export default function Tabs(props) {
     } else if(currentTab === tabs[1].name) {
       return (
         <div>
-          Coming Soon
+          <GCP />
         </div>
       )
     }

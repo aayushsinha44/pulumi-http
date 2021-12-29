@@ -9,6 +9,7 @@ from flask_cors import CORS
 import pulumi_gcp as gcp
 from pulumi_gcp.storage.bucket import Bucket
 import json
+import traceback
 
 
 app = Flask(__name__)
@@ -73,7 +74,7 @@ def create_gcp_bucket(content):
   url = gcp.storage.get_object_signed_url(bucket=bucket.id,
     path=file.name)
   
-  pulumi.export("website_url", url['signed_url'])
+  pulumi.export("website_url", url)
 
 @app.route("/gcp/sites", methods=["POST"])
 def create_gcp_website():
@@ -84,6 +85,8 @@ def create_gcp_website():
 
   if credentials == None:
     return {"message": "GCP credentials are required"}, 400
+
+  credentials = json.loads(credentials)
 
   if content == None or content == "":
     return {"message": "content required"}, 400
@@ -103,6 +106,7 @@ def create_gcp_website():
   except auto.StackAlreadyExistsError:
     return {"message": "stack already exists"}, 400
   except Exception as e:
+    print(traceback.format_exc())
     return {"message": "something went wrong", "execption": str(e)}, 500
 
 @app.route("/aws/sites", methods=["POST"])
@@ -163,7 +167,7 @@ def delete_aws_website(id):
   except Exception as e:
     return  {"message": "something went wrong", "execption": str(e)}, 500
 
-@app.route("/gcp/sites/<string:id>", methods=["DELETE"])
+@app.route("/gcp/sites/<string:id>", methods=["POST"])
 def delete_gcp_website(id):
   stack_name = id
 
@@ -172,6 +176,7 @@ def delete_gcp_website(id):
   if credentials == None:
     return {"message": "GCP credentials are required"}, 400
 
+  credentials = json.loads(credentials)
   try:
     stack = auto.select_stack(stack_name=stack_name,
                               project_name=PROJECT_NAME,
