@@ -3,6 +3,7 @@ attrs==21.2.0
 click==8.0.3
 dill==0.3.4
 Flask==2.0.2
+Flask-Cors==3.0.10
 grpcio==1.43.0
 itsdangerous==2.0.1
 Jinja2==3.0.3
@@ -12,6 +13,7 @@ protobuf==3.19.1
 pulumi==3.20.0
 pulumi-aws==4.33.0
 pulumi-digitalocean==4.10.0
+pulumi-gcp==6.6.0
 PyYAML==6.0
 semver==2.13.0
 six==1.16.0
